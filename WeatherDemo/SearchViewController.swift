@@ -112,7 +112,7 @@ extension SearchViewController: NSSearchFieldDelegate, NSTextFieldDelegate {
     
     func searchFieldDidEndSearching(_ sender: NSSearchField) {
         self.cities.removeAll()
-        self.scrollView.isHidden = true
+        self.elements(hide: false)
         self.tableView.reloadData()
         print("didEnd")
     }

@@ -20,6 +20,9 @@ class ViewController: NSViewController {
     @IBOutlet weak var sunsetTime: NSTextField!
     @IBOutlet weak var collectionView: NSCollectionView!
     @IBOutlet weak var tableView: NSTableView!
+    @IBOutlet weak var collectionViewConstarint: NSLayoutConstraint!
+    
+    @IBOutlet weak var borderScrollView: NSScrollView!
     
     let houreCellIdentifier: NSUserInterfaceItemIdentifier = NSUserInterfaceItemIdentifier(rawValue: "houreCellIdentifier")
     var hoursTemp: [Hour] = []
@@ -68,23 +71,28 @@ class ViewController: NSViewController {
     func changeLeftPanelVisibility() {
         splitViewIsVisible = !splitViewIsVisible
         let newPosition: CGFloat = !splitViewIsVisible ? 220 : 0
+        let constraint: CGFloat = splitViewIsVisible ? 216 : 16
         animateSplitView(
                toPosition: newPosition,
                ofDividerAt: 0,
-               to: splitViewIsVisible
+               to: splitViewIsVisible,
+               collectionView: constraint
            )
     }
     
     func animateSplitView(
         toPosition position: CGFloat,
         ofDividerAt dividerIndex: Int,
-        to visible: Bool
+        to visible: Bool,
+        collectionView constraint: CGFloat
     ) {
         NSAnimationContext.runAnimationGroup { context in
             context.allowsImplicitAnimation = true
-            context.duration = 0.75
+            context.duration = 0.45
+            collectionViewConstarint.constant = constraint
             splitView.setPosition(position, ofDividerAt: dividerIndex)
             splitView.layoutSubtreeIfNeeded()
+            borderScrollView.layoutSubtreeIfNeeded()
         }
     }
     
@@ -204,7 +212,9 @@ extension ViewController: NSTableViewDelegate, NSTableViewDataSource {
             return
         }
         let row = table.selectedRow
-        loadData(forCity: favCities[row].location.name)
+        if row >= 0 {
+            loadData(forCity: favCities[row].location.name)
+        }
     }
 }
 
@@ -249,12 +259,13 @@ extension ViewController: CityCellProtocol, SearchViewProtocol {
         tableView.reloadData()
     }
     
-    func reloadDataTableView() {
+    func reloadDataTableView(favCity: String) {
         if let cities = UserDefaultsHelper.favCities {
             self.cities.removeAll()
             self.favCities.removeAll()
             self.cities = cities
             self.loadingFav(cities: self.cities)
+            self.loadData(forCity: favCity)
         }
     }
 }

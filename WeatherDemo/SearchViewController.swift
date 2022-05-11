@@ -9,7 +9,7 @@ import Cocoa
 import SDWebImage
 
 protocol SearchViewProtocol: AnyObject {
-    func reloadDataTableView()
+    func reloadDataTableView(favCity: String)
 }
 
 class SearchViewController: NSViewController {
@@ -45,9 +45,9 @@ class SearchViewController: NSViewController {
             let queuq = DispatchQueue.global()
             queuq.sync {
                 UserDefaultsHelper.shared.add(city: currentSearchCity)
+                searchViewDelegate?.reloadDataTableView(favCity: currentSearchCity)
             }
         }
-        searchViewDelegate?.reloadDataTableView()
         self.dismiss(sender)
     }
     @IBAction func cancelButton(_ sender: Any) {

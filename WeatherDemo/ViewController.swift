@@ -26,7 +26,7 @@ class ViewController: NSViewController {
     var cities: [String] = []
     var favCities: [CityData] = []
     let locationManager = CLLocationManager()
-
+    var splitViewIsVisible = true
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -38,6 +38,8 @@ class ViewController: NSViewController {
             self.cities = cities
             self.loadingFav(cities: self.cities)
         }
+        splitView.dividerStyle = .thin
+        splitView.setValue(NSColor.white, forKey: "dividerColor")
         view.wantsLayer = true
         view.layer?.backgroundColor = CGColor(red: 0/255, green: 140/255, blue: 198/255, alpha: 0.88)
         
@@ -54,25 +56,22 @@ class ViewController: NSViewController {
 
         }
     }
-
-    @IBAction func sideMenuButtonTap(_ sender: Any) {
-        changeLeftPanelVisibility(visible: false)
-    }
     
     @IBAction func closeButton(_ sender: Any) {
-        changeLeftPanelVisibility(visible: true)
+        changeLeftPanelVisibility()
     }
     
     @IBAction func addNewCityButton(_ sender: Any) {
         performSegue(withIdentifier: "addNewCitySegue", sender: self)
     }
     
-    func changeLeftPanelVisibility(visible: Bool) {
-        let newPosition: CGFloat = visible ? 150 : 0
+    func changeLeftPanelVisibility() {
+        splitViewIsVisible = !splitViewIsVisible
+        let newPosition: CGFloat = !splitViewIsVisible ? 220 : 0
         animateSplitView(
                toPosition: newPosition,
                ofDividerAt: 0,
-               to: visible
+               to: splitViewIsVisible
            )
     }
     
@@ -84,7 +83,6 @@ class ViewController: NSViewController {
         NSAnimationContext.runAnimationGroup { context in
             context.allowsImplicitAnimation = true
             context.duration = 0.75
-
             splitView.setPosition(position, ofDividerAt: dividerIndex)
             splitView.layoutSubtreeIfNeeded()
         }

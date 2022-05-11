@@ -21,8 +21,9 @@ class ViewController: NSViewController {
     @IBOutlet weak var collectionView: NSCollectionView!
     @IBOutlet weak var tableView: NSTableView!
     @IBOutlet weak var collectionViewConstarint: NSLayoutConstraint!
-    
     @IBOutlet weak var borderScrollView: NSScrollView!
+    
+    @IBOutlet weak var aqiLabel: NSTextField!
     
     let houreCellIdentifier: NSUserInterfaceItemIdentifier = NSUserInterfaceItemIdentifier(rawValue: "houreCellIdentifier")
     var hoursTemp: [Hour] = []
@@ -102,6 +103,7 @@ class ViewController: NSViewController {
             self.cityName.stringValue = city.location.name
             self.cityCurrentTemp.stringValue = "\(city.current.temp_c) ℃"
             self.iconCurrentState.sd_setImage(with: url)
+            self.aqiLabel.stringValue = self.indicatorAQI(co: city.current.air_quality.co)
         }
         
         ApiHelper.shared.cityAstronomyData(apiKind: ApiKind.astronomy, forCity: forCity) { city in
@@ -114,6 +116,25 @@ class ViewController: NSViewController {
             self.hoursTemp = self.filtering(forecastdays: forecastdays)
             self.collectionView.reloadData()
         }
+    }
+    
+    func indicatorAQI(co: Double) -> String {
+        var stringAQI = ""
+        switch Int(co) {
+        case 0...50:
+            stringAQI = "\(Int(co))  🟢"
+        case 51...100:
+            stringAQI = "\(Int(co))  🟡"
+        case 101...150:
+            stringAQI = "\(Int(co))  🟠"
+        case 151...200:
+            stringAQI = "\(Int(co))  🔴❗️"
+        case 201...500:
+            stringAQI = "\(Int(co))  🟣❗️"
+        default:
+            stringAQI = "\(Int(co))  🟢"
+        }
+        return stringAQI
     }
     
     func loadingFav(cities: [String]) {

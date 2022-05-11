@@ -26,14 +26,14 @@ class ApiHelper: CityProtocol {
     static var shared = ApiHelper()
     
     func cityCurrentData(apiKind: ApiKind, forCity: String, complition: @escaping (CityData) -> ()) {
-        let url = "https://api.weatherapi.com/v1/\(apiKind).json?key=908091de44534cae97a35444221005&q=\(forCity)&aqi=no"
+        let url = "https://api.weatherapi.com/v1/\(apiKind).json?key=908091de44534cae97a35444221005&q=\(forCity)&aqi=yes"
         Alamofire.request(url).responseJSON { response in
-                        
+            
             let decoder = JSONDecoder()
             if let json = try? decoder.decode(CityData.self, from: response.data!) {
                 
                 let city = json
-               complition(city)
+                complition(city)
             }
         }
     }
@@ -41,12 +41,12 @@ class ApiHelper: CityProtocol {
     func cityAstronomyData(apiKind: ApiKind, forCity: String, complition: @escaping (CityAstronomyData) -> ()) {
         let url = "https://api.weatherapi.com/v1/\(apiKind).json?key=908091de44534cae97a35444221005&q=\(forCity)&aqi=no"
         Alamofire.request(url).responseJSON { response in
-                        
+            
             let decoder = JSONDecoder()
             if let json = try? decoder.decode(CityAstronomyData.self, from: response.data!) {
                 
                 let cityAstronomy = json
-               complition(cityAstronomy)
+                complition(cityAstronomy)
             }
         }
     }
@@ -54,7 +54,7 @@ class ApiHelper: CityProtocol {
     func cityForecastData(apiKind: ApiKind, forCity: String, complition: @escaping ([Forecastday]) -> ()) {
         let url = "https://api.weatherapi.com/v1/\(apiKind).json?key=908091de44534cae97a35444221005&q=\(forCity)&days=2&aqi=no"
         Alamofire.request(url).responseJSON { response in
-                        
+            
             let decoder = JSONDecoder()
             if let json = try? decoder.decode(CityForecastData.self, from: response.data!) {
                 
@@ -63,11 +63,11 @@ class ApiHelper: CityProtocol {
             }
         }
     }
-
+    
     func citySearchData(apiKind: ApiKind, forCity: String, complition: @escaping ([SearchCity]) -> ()) {
         let url = "https://api.weatherapi.com/v1/search.json?key=908091de44534cae97a35444221005&q=\(forCity)"
         Alamofire.request(url).responseJSON { response in
-                        
+            
             let decoder = JSONDecoder()
             if let json = try? decoder.decode([SearchCity].self, from: response.data!) {
                 
@@ -106,8 +106,13 @@ struct Location: Codable {
 }
 
 struct Current: Codable {
-    var temp_c: Double
-    var condition: Condition
+    var temp_c: Double,
+        condition: Condition,
+        air_quality: AQI
+}
+
+struct AQI: Codable {
+    var co: Double
 }
 
 struct Astronomy: Codable {
@@ -128,17 +133,17 @@ struct Forecastday: Codable {
 }
 
 struct Hour: Codable {
-    var time: String
-    var temp_c: Double
-    var condition: Condition
+    var time: String,
+        temp_c: Double,
+        condition: Condition
 }
 
 struct Condition: Codable {
-    var text: String
-    var icon: String
+    var text: String,
+        icon: String
 }
 
 struct SearchCity: Codable {
-    var name: String
-    var country: String
+    var name: String,
+        country: String
 }
